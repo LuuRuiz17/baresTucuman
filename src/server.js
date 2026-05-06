@@ -30,4 +30,15 @@ app.get("/bares", (req, res) => {
     res.json(bares);
 });
 
+//UPDATE
+app.put("/bares/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+
+    bares = bares.map(bar =>
+        bar.id === id ? { ...bar, ...req.body } : bar
+    );
+
+    res.json({ mensaje: "Actualizado" });
+});
+
 
