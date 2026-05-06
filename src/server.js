@@ -25,4 +25,9 @@ app.post("/bares", (req, res) => {
     res.json(nuevoBar);
 });
 
+//READ
+app.get("/bares", (req, res) => {
+    res.json(bares);
+});
+
 
