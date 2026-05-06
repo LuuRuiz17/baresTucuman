@@ -3,8 +3,23 @@ import obtenerDatos from "./src/obtenerDatos.js";
 
 const API_URL = "http://localhost:3000/bares";
 
-// Función para normalizar strings (evita duplicados por mayúsculas/espacios)
-const normalizar = (str) => str.trim().toLowerCase();
+function normalizarTexto(texto) {
+    return texto
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, " ");
+}
+
+function similitud(a, b) {
+    const setA = new Set(normalizarTexto(a).split(" "));
+    const setB = new Set(normalizarTexto(b).split(" "));
+
+    const interseccion = [...setA].filter(x => setB.has(x)).length;
+    const union = new Set([...setA, ...setB]).size;
+
+    return union === 0 ? 0 : interseccion / union;
+}
 
 async function ejecutarSync() {
     try {
@@ -20,12 +35,35 @@ async function ejecutarSync() {
         const existentes = res.data;
 
         for (const bar of datos) {
-            const existe = existentes.some(b =>
-                normalizar(b.nombre) === normalizar(bar.nombre)
-            );
 
-            if (existe) {
+            // Busco el mejor match en existentes
+            let mejorMatch = null;
+            let mejorScore = 0;
+
+            for (const b of existentes) {
+                const score = similitud(b.nombre, bar.nombre);
+
+                if (score > mejorScore) {
+                    mejorScore = score;
+                    mejorMatch = b;
+                }
+            }
+
+            const esDuplicado = mejorScore >= 0.65;
+
+            if (!esDuplicado && mejorScore > 0.4) {
+                console.log(`\nPosible duplicado: "${bar.nombre}" ~ "${mejorMatch.nombre}" (${mejorScore.toFixed(2)})`);
+            }
+
+            if (esDuplicado) {
                 duplicados++;
+                if (mejorScore < 1) {
+                    console.log("\nDuplicado detectado:");
+                    console.log(`\n - Nuevo: "${bar.nombre}"`);
+                    console.log(` - Existente: "${mejorMatch.nombre}"`);
+                    console.log(` - Similitud: ${mejorScore.toFixed(2)}`);
+                }
+
                 continue;
             }
 
@@ -37,12 +75,14 @@ async function ejecutarSync() {
 
                 existentes.push(response.data);
                 nuevos++;
+
             } catch (err) {
                 console.error(`Error al crear "${bar.nombre}":`, err.message);
                 errores++;
             }
         }
 
+        console.log("\nRESUMEN");
         console.log("Procesados:", datos.length);
         console.log("Nuevos:", nuevos);
         console.log("Duplicados:", duplicados);
