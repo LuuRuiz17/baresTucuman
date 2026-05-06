@@ -11,6 +11,16 @@ function normalizarTexto(texto) {
         .replace(/\s+/g, " ");
 }
 
+function similitud(a, b) {
+    const setA = new Set(normalizarTexto(a).split(" "));
+    const setB = new Set(normalizarTexto(b).split(" "));
+
+    const interseccion = [...setA].filter(x => setB.has(x)).length;
+    const union = new Set([...setA, ...setB]).size;
+
+    return union === 0 ? 0 : interseccion / union;
+}
+
 async function ejecutarSync() {
     try {
         // Obtengo datos (soporta async o sync)
@@ -25,9 +35,9 @@ async function ejecutarSync() {
         const existentes = res.data;
 
         for (const bar of datos) {
-            const existe = existentes.some(b =>
-                normalizar(b.nombre) === normalizar(bar.nombre)
-            );
+            const existe = existentes.some(b => {
+                return similitud(b.nombre, bar.nombre) >= 0.65;
+            });
 
             if (existe) {
                 duplicados++;
