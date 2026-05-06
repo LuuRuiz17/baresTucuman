@@ -3,8 +3,13 @@ import obtenerDatos from "./src/obtenerDatos.js";
 
 const API_URL = "http://localhost:3000/bares";
 
-// Función para normalizar strings (evita duplicados por mayúsculas/espacios)
-const normalizar = (str) => str.trim().toLowerCase();
+function normalizarTexto(texto) {
+    return texto
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s]/g, "")
+        .replace(/\s+/g, " ");
+}
 
 async function ejecutarSync() {
     try {
