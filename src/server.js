@@ -41,4 +41,14 @@ app.put("/bares/:id", (req, res) => {
     res.json({ mensaje: "Actualizado" });
 });
 
+//DELETE
+app.delete("/bares/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+
+    bares = bares.map(bar =>
+        bar.id === id ? { ...bar, activo: false } : bar
+    );
+
+    res.json({ mensaje: "Desactivado" });
+});
 
