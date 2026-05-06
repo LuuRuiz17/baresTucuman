@@ -1,9 +1,11 @@
 [
-  { "nombre": "Leno", "ubicacion": "San Miguel de Tucumán" },
-  { "nombre": "Oliver Brown", "ubicacion": "San Miguel de Tucumán" },
-  { "nombre": "Kentucky Portal Pizzería", "ubicacion": "Yerba Buena" },
-  { "nombre": "La Pizzada", "ubicacion": "San Miguel de Tucumán" },
-  { "nombre": "Cafe & Company", "ubicacion": "Yerba Buena" },
-  { "nombre": "Bar Irlanda Tucumán" , "ubicacion": "San Miguel de Tucumán"},
-  { "nombre": "Irlanda Bar", "ubicacion": "San Miguel de Tucumán"}
+    { "nombre": "Leno", "ubicacion": "San Miguel de Tucumán" },
+    { "nombre": "Oliver Brown", "ubicacion": "San Miguel de Tucumán" },
+    { "nombre": "Kentucky Portal Pizzería", "ubicacion": "Yerba Buena" },
+    { "nombre": "La Pizzada", "ubicacion": "San Miguel de Tucumán" },
+    { "nombre": "Cafe & Company", "ubicacion": "Yerba Buena" },
+    { "nombre": "Bar Irlanda Tucumán" , "ubicacion": "San Miguel de Tucumán"},
+    { "nombre": "Irlanda Bar", "ubicacion": "San Miguel de Tucumán"},
+    { "nombre": "Bar El Norte Tucumán", "ubicacion": "SMT"},
+    { "nombre": "El Norte", "ubicacion": "SMT"}  
 ]

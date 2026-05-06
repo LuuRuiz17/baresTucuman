@@ -35,12 +35,35 @@ async function ejecutarSync() {
         const existentes = res.data;
 
         for (const bar of datos) {
-            const existe = existentes.some(b => {
-                return similitud(b.nombre, bar.nombre) >= 0.65;
-            });
 
-            if (existe) {
+            // Busco el mejor match en existentes
+            let mejorMatch = null;
+            let mejorScore = 0;
+
+            for (const b of existentes) {
+                const score = similitud(b.nombre, bar.nombre);
+
+                if (score > mejorScore) {
+                    mejorScore = score;
+                    mejorMatch = b;
+                }
+            }
+
+            const esDuplicado = mejorScore >= 0.65;
+
+            if (!esDuplicado && mejorScore > 0.4) {
+                console.log(`\nPosible duplicado: "${bar.nombre}" ~ "${mejorMatch.nombre}" (${mejorScore.toFixed(2)})`);
+            }
+
+            if (esDuplicado) {
                 duplicados++;
+                if (mejorScore < 1) {
+                    console.log("\nDuplicado detectado:");
+                    console.log(`\n - Nuevo: "${bar.nombre}"`);
+                    console.log(` - Existente: "${mejorMatch.nombre}"`);
+                    console.log(` - Similitud: ${mejorScore.toFixed(2)}`);
+                }
+
                 continue;
             }
 
@@ -52,12 +75,14 @@ async function ejecutarSync() {
 
                 existentes.push(response.data);
                 nuevos++;
+
             } catch (err) {
                 console.error(`Error al crear "${bar.nombre}":`, err.message);
                 errores++;
             }
         }
 
+        console.log("\nRESUMEN");
         console.log("Procesados:", datos.length);
         console.log("Nuevos:", nuevos);
         console.log("Duplicados:", duplicados);
