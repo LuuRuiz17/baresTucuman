@@ -1,9 +1,6 @@
 import supabase from "./supabase.js";
 import obtenerDatos from "./obtenerDatos.js";
 
-// --------------------
-// NORMALIZACIÓN
-// --------------------
 function normalizarTexto(texto) {
     return texto
         .toLowerCase()
@@ -12,9 +9,6 @@ function normalizarTexto(texto) {
         .replace(/\s+/g, " ");
 }
 
-// --------------------
-// SIMILITUD (JACCARD SIMPLE)
-// --------------------
 function similitud(a, b) {
     const setA = new Set(normalizarTexto(a).split(" "));
     const setB = new Set(normalizarTexto(b).split(" "));
@@ -25,30 +19,12 @@ function similitud(a, b) {
     return union === 0 ? 0 : interseccion / union;
 }
 
-// --------------------
-// DUPLICADOS INTERNOS (JSON vs JSON)
-// --------------------
-function detectarDuplicadoInterno(datos, barActual) {
-    for (const b of datos) {
-        if (b === barActual) continue;
-
-        const score = similitud(b.nombre, barActual.nombre);
-
-        if (score >= 0.65) {
-            return { match: b, score };
-        }
-    }
-    return null;
-}
-
-// --------------------
-// DUPLICADOS VS DB
-// --------------------
-function detectarDuplicadoDB(existentes, barActual) {
+function detectarDuplicado(dataSet, barActual, ignorarSelf = false) {
     let mejorMatch = null;
     let mejorScore = 0;
 
-    for (const b of existentes) {
+    for (const b of dataSet) {
+        if (ignorarSelf && b === barActual) continue;
         const score = similitud(b.nombre, barActual.nombre);
 
         if (score > mejorScore) {
@@ -59,6 +35,25 @@ function detectarDuplicadoDB(existentes, barActual) {
 
     return { mejorMatch, mejorScore };
 }
+
+function clasificarDuplicado(score, match, contexto, contadores) {
+    if (!match) return false;
+
+    if (score >= 0.7) {
+        contadores.duplicados++;
+        console.log(`DUPLICADO ${contexto}: "${match.nombre}" (Score: ${score.toFixed(2)})`);
+        return "duplicado";
+    }
+
+    if (score > 0.4 && score < 0.7) {
+        contadores.potenciales++;
+        console.log(`POTENCIAL DUPLICADO ${contexto}: "${match.nombre}" (Score: ${score.toFixed(2)})`);
+        return "potencial";
+    }
+
+    return false;
+}
+
 
 async function ejecutarSync() {
     const datos = await obtenerDatos();
@@ -84,21 +79,21 @@ async function ejecutarSync() {
 
         if (vistos.has(nombreNorm)) {
             duplicados++;
-            console.log(`\nDUPLICADO INTERNO: "${bar.nombre}"`);
+            console.log(`DUPLICADO: "${bar.nombre}"`);
             continue;
         }
 
-        const { mejorMatch, mejorScore } = detectarDuplicadoDB(existentes, bar);
-
-        if (mejorScore >= 0.65) {
-            duplicados++;
-            console.log(`\nDUPLICADO EN DB: "${bar.nombre}" ↔ "${mejorMatch.nombre}" (Score: ${mejorScore.toFixed(2)})`);
-            continue;
-        }
-
-        if (mejorScore > 0.4) {
+        const { mejorMatch: matchInterno, mejorScore: scoreInterno } = detectarDuplicado(datos, bar, true);
+        const resultadoInterno = clasificarDuplicado(scoreInterno, matchInterno, "INTERNO", { duplicados, potenciales });
+        if (resultadoInterno === "potencial") {
             potenciales++;
-            console.log(`\nPOTENCIAL DUPLICADO: "${bar.nombre}" ↔ "${mejorMatch.nombre}" (Score: ${mejorScore.toFixed(2)})`);
+        }
+        
+        const { mejorMatch, mejorScore } = detectarDuplicado(existentes, bar);
+        const resultadoDB = clasificarDuplicado(mejorScore, mejorMatch, "EN DB", { duplicados, potenciales });
+        if (resultadoDB === "duplicado") {
+            duplicados++;
+            continue;
         }
 
         const { error: insertError } = await supabase
