@@ -6,6 +6,7 @@
     { "nombre": "Cafe & Company", "ubicacion": "Yerba Buena" },
     { "nombre": "Bar Irlanda Tucumán" , "ubicacion": "San Miguel de Tucumán"},
     { "nombre": "Irlanda Bar", "ubicacion": "San Miguel de Tucumán"},
-    { "nombre": "Bar El Norte Tucumán", "ubicacion": "SMT"},
-    { "nombre": "El Norte", "ubicacion": "SMT"}  
+    { "nombre": "Mostaza", "ubicacion":"San Miguel de Tucumán"},
+    { "nombre": "Mostaza", "ubicacion":"San Miguel de Tucumán"},
+    { "nombre": "Burger King", "ubicacion":"San Miguel de Tucumán"}
 ]
