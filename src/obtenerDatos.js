@@ -7,11 +7,11 @@ export default function obtenerDatos() {
   const resultado = bares.map(bar => ({
     nombre: bar.nombre,
     ubicacion: bar.ubicacion,
-    categoria: "",
+    categoria: bar.categoria,
     fuente: "mock",
-    fechaObtencion: new Date().toISOString()
+    fechaObtencion: new Date().toISOString(),
+    activo: true
   }));
 
   return resultado;
 }   
-

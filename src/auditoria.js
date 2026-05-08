@@ -16,3 +16,4 @@ export async function registrarHistorial(barId, accion, datos) {
     console.error("Historial error:", error.message);
   }
 }
+
