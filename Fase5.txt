@@ -1,0 +1,24 @@
+¿Cómo evitás duplicados?
+
+Normalizo los nombres antes de compararlos (minúsculas, eliminación de caracteres especiales y espacios innecesarios).
+Utilizo un algoritmo de similitud basado en Jaccard Similarity para detectar coincidencias aunque los nombres no sean
+exactamente iguales. Luego clasifico los resultados en “duplicado” y “potencial duplicado” según el porcentaje de similitud,
+evitando inserciones repetidas y registrando coincidencias dudosas para revisión.
+
+¿Cómo escalarías este sistema?
+
+* Compararía también las ubicaciones y coordenadas para diferenciar sucursales o detectar si realmente es el mismo lugar.
+* Incorporaría más fuentes de datos (APIs, scraping y datasets) para enriquecer y validar la información.
+* Reemplazaría la comparación manual por búsquedas optimizadas e índices en base de datos para soportar grandes volúmenes.
+
+¿Qué problemas puede tener este flujo?
+
+* Falsos positivos: nombres distintos que parecen similares (ej. “Kentucky” vs “Kentucky Portal Pizzería”).
+* Falsos negativos: duplicados que no se detectan por diferencias ortográficas (“Mostaza” vs “Mostasa”).
+* Problemas de escalabilidad: comparar cada registro contra todos los existentes puede volverse lento con muchos datos.
+
+¿Cómo mejorarías la calidad de los datos?
+
+* Podría aplicar una normalización más robusta (por ejemplo, no considerando palabras irrelevantes como “bar” o “café”).
+* Validaría los datos usando atributos adicionales como dirección, teléfono o coordenadas.
+* Enriquecería la información cruzándola con fuentes externas como Google Maps o guías locales.

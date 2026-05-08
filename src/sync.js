@@ -1,5 +1,6 @@
 import supabase from "./supabase.js";
 import obtenerDatos from "./obtenerDatos.js";
+import { registrarHistorial } from "./auditoria.js";
 
 function normalizarTexto(texto) {
     return texto
@@ -54,7 +55,6 @@ function clasificarDuplicado(score, match, contexto, contadores) {
     return false;
 }
 
-
 async function ejecutarSync() {
     const datos = await obtenerDatos();
 
@@ -96,14 +96,20 @@ async function ejecutarSync() {
             continue;
         }
 
-        const { error: insertError } = await supabase
+        const { data: insertado, error: insertError } = await supabase
             .from("baresTucuman")
             .insert([
                 {
                     nombre: bar.nombre,
-                    ubicacion: bar.ubicacion
+                    ubicacion: bar.ubicacion,
+                    categoria: bar.categoria,
+                    fuente: bar.fuente,
+                    fechaObtencion: bar.fechaObtencion,
+                    activo: bar.activo
                 }
-            ]);
+            ])
+            .select()
+            .single();
 
         if (insertError) {
             errores++;
@@ -111,6 +117,8 @@ async function ejecutarSync() {
         } else {
             nuevos++;
             vistos.add(nombreNorm);
+            existentes.push(insertado);
+            await registrarHistorial(insertado.id, "creado_desde_sync", insertado);
         }
     }
 

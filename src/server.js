@@ -1,6 +1,6 @@
 import express from "express";
-
-let bares = [];
+import supabase from "./supabase.js";
+import { registrarHistorial } from "./auditoria.js";
 
 const app = express();
 app.use(express.json());
@@ -9,46 +9,112 @@ app.listen(3000, () => {
 });
 
 // CREATE
-app.post("/bares", (req, res) => {
+app.post("/bares", async (req, res) => {
     const nuevoBar = {
-        id: Date.now(),
         nombre: req.body.nombre,
         ubicacion: req.body.ubicacion,
-        categoria: "",
-        fuente: "mock",
-        fechaObtencion: new Date().toISOString(),
+        categoria: req.body.categoria,
+        fuente: req.body.fuente || "manual",
+        fechaObtencion: req.body.fechaObtencion || new Date().toISOString(),
         activo: true
     };
 
-    bares.push(nuevoBar);
+    const { data, error } = await supabase
+        .from("baresTucuman")
+        .insert([nuevoBar])
+        .select()
+        .single();
 
-    res.json(nuevoBar);
+    if (error) {
+        return res.status(500).json({ mensaje: "No se pudo guardar el bar", error: error.message });
+    }
+
+    await registrarHistorial(data.id, "creado", data);
+
+    res.json(data);
 });
 
 //READ
-app.get("/bares", (req, res) => {
-    res.json(bares);
+app.get("/bares", async (req, res) => {
+    const { data, error } = await supabase
+        .from("baresTucuman")
+        .select("*")
+        .eq("activo", true);
+
+    if (error) {
+        return res.status(500).json({ mensaje: "No se pudieron obtener los bares", error: error.message });
+    }
+
+    res.json(data);
 });
 
 //UPDATE
-app.put("/bares/:id", (req, res) => {
+app.put("/bares/:id", async (req, res) => {
     const id = parseInt(req.params.id);
+    const datosActualizados = { ...req.body };
 
-    bares = bares.map(bar =>
-        bar.id === id ? { ...bar, ...req.body } : bar
-    );
+    if (datosActualizados.nombre && !datosActualizados.categoria) {
+        datosActualizados.categoria = clasificarCategoria(datosActualizados.nombre);
+    }
 
-    res.json({ mensaje: "Actualizado" });
+    const { data, error } = await supabase
+        .from("baresTucuman")
+        .update(datosActualizados)
+        .eq("id", id)
+        .select()
+        .maybeSingle();
+
+    if (error) {
+        return res.status(500).json({ mensaje: "No se pudo actualizar el bar", error: error.message });
+    }
+
+    if (!data) {
+        return res.status(404).json({ mensaje: "Bar no encontrado" });
+    }
+
+    await registrarHistorial(data.id, "editado", data);
+
+    res.json({
+        mensaje: "Actualizado",
+        bar: data
+    });
 });
 
 //DELETE
-app.delete("/bares/:id", (req, res) => {
+app.delete("/bares/:id", async (req, res) => {
     const id = parseInt(req.params.id);
+    const { data, error } = await supabase
+        .from("baresTucuman")
+        .update({ activo: false })
+        .eq("id", id)
+        .select()
+        .maybeSingle();
 
-    bares = bares.map(bar =>
-        bar.id === id ? { ...bar, activo: false } : bar
-    );
+    if (error) {
+        return res.status(500).json({ mensaje: "No se pudo desactivar el bar", error: error.message });
+    }
 
-    res.json({ mensaje: "Desactivado" });
+    if (!data) {
+        return res.status(404).json({ mensaje: "Bar no encontrado" });
+    }
+
+    await registrarHistorial(data.id, "desactivado", data);
+
+    res.json({
+        mensaje: "Desactivado",
+        bar: data
+    });
 });
 
+app.get("/historial", async (req, res) => {
+    const { data, error } = await supabase
+        .from("historial_bares")
+        .select("*")
+        .order("fecha", { ascending: false });
+
+    if (error) {
+        return res.status(500).json({ mensaje: "No se pudo obtener el historial", error: error.message });
+    }
+
+    res.json(data);
+});
