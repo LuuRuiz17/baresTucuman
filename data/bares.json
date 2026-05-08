@@ -1,12 +1,65 @@
 [
-    { "nombre": "Leno", "ubicacion": "San Miguel de Tucumán" },
-    { "nombre": "Oliver Brown", "ubicacion": "San Miguel de Tucumán" },
-    { "nombre": "Kentucky Portal Pizzería", "ubicacion": "Yerba Buena" },
-    { "nombre": "La Pizzada", "ubicacion": "San Miguel de Tucumán" },
-    { "nombre": "Cafe & Company", "ubicacion": "Yerba Buena" },
-    { "nombre": "Bar Irlanda Tucumán" , "ubicacion": "San Miguel de Tucumán"},
-    { "nombre": "Irlanda Bar", "ubicacion": "San Miguel de Tucumán"},
-    { "nombre": "Mostaza", "ubicacion":"San Miguel de Tucumán"},
-    { "nombre": "Mostaza", "ubicacion":"San Miguel de Tucumán"},
-    { "nombre": "Burger King", "ubicacion":"San Miguel de Tucumán"}
+  { 
+    "nombre": "Leno", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Restaurante",
+    "fuente": "https://ejemplo.com/bares-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Oliver Brown", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Cafetería",
+    "fuente": "https://ejemplo.com/bares-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Kentucky Portal Pizzería", 
+    "ubicacion": "Yerba Buena",
+    "categoria": "Pizzería",
+    "fuente": "https://ejemplo.com/bares-yerba-buena",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "La Pizzada", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Pizzería",
+    "fuente": "https://ejemplo.com/bares-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Cafe & Company", 
+    "ubicacion": "Yerba Buena",
+    "categoria": "Cafetería",
+    "fuente": "https://ejemplo.com/bares-yerba-buena",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Bar Irlanda Tucumán", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Bar",
+    "fuente": "https://ejemplo.com/bares-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Irlanda Bar", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Bar",
+    "fuente": "https://ejemplo.com/bares-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Mostaza", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Comida rápida",
+    "fuente": "https://ejemplo.com/fast-food-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  },
+  { 
+    "nombre": "Burger King", 
+    "ubicacion": "San Miguel de Tucumán",
+    "categoria": "Comida rápida",
+    "fuente": "https://ejemplo.com/fast-food-tucuman",
+    "fecha_obtencion": "2026-05-08"
+  }
 ]
