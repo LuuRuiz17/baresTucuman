@@ -197,3 +197,13 @@ Si algún campo no está presente, el sistema completa valores por defecto.
 * las policies deben permitir `select`, `insert` y `update`
 * las operaciones de alta y actualización validan duplicados exactos mediante nombre normalizado
 * el dataset actual es mock, pero la estructura permite reemplazarlo más adelante por scraping o APIs reales
+
+## 🔀 Flujo de colaboración y Pull Requests
+
+Para simular un entorno de trabajo colaborativo, se agregué un colaborador al repositorio y realicé un flujo de Pull Request (PR) con revisión y aprobación antes del merge a la rama principal.
+
+Esto permitió validar:
+
+- Flujo de revisión de cambios
+- Aprobación de PR
+- Integración controlada de nuevas funcionalidades
